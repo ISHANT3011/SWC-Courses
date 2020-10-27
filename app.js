@@ -2,11 +2,14 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
+const path = require("path");
+
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 5000;
-const url =
-  "mongodb+srv://satyendra:1234@cluster0-afmf0.mongodb.net/test?retryWrites=true&w=majority";
+const url = process.env.url;
 const session = require("express-session");
 const cookieSession = require("cookie-session");
 const MongoStore = require("connect-mongo")(session);
@@ -30,7 +33,7 @@ mongoose
     useFindAndModify: false,
   })
   .then(() => console.log("Successful DB connection"))
-  .catch(console.error("DB connection fail"));
+  .catch((err) => console.error("DB connection fail"));
 
 var corsOptions = {
   origin: "http://happy-learning-react.herokuapp.com",
@@ -87,6 +90,16 @@ app.use((err, req, res, next) => {
     console.log(err);
   }
 });
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === "production") {
+  //set static folder
+  app.use(express.static("client/build"));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+}
 
 app.listen(PORT, function () {
   console.log(`SWC Media server has started at port ${PORT}`);
