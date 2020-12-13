@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import DashBoard from "./DashBoard/DashBoard";
+import CourseDetail from "./components/VideoDetail/VideoDetail";
 
 const CourseDetail = (props) => {
   const details = { ...props.location.state };
@@ -14,6 +15,7 @@ const CourseDetail = (props) => {
       }}
     >
       <DashBoard details={details} />
+      <Route path="/video/:vid" exact component={VideoDetail} />
     </div>
   );
 };
